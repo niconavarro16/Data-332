@@ -55,3 +55,33 @@ miles_per_gallon <- total_miles_driven - total_gallons_consumed
 #total cost per mile
 sum_price_gallon <- sum(df$Price.per.Gallon)
 total_cost_per_mile <- total_miles_driven / sum_price_gallon
+
+df$starting_city_state <- gsub(',', "", df$starting_city_state)
+
+# df[c('col1', 'col2')] <- str_split_fixed(df$starting_city_state, ' ', 2)
+
+#doing a pivot table
+df_starting_pivot <- df %>% 
+  group_by(starting_city_state) %>%
+  summarize(count = n(),
+          mean_size_hours = mean(Hours, na.rm = TRUE),
+          sd_hours = sd(Hours, na.rm = TRUE),
+          total_hours = sum(Hours, na.rm = TRUE),
+          total_gallons = sum(Gallons, na.rm = TRUE)
+          )
+
+ df[c('deliverywarehouse', 'deliverycitystate')] <- str_split_fixed(df$Delivery.Location, ',', 2)
+df_delivery_pivot <- df %>% 
+  group_by(Delivery.Location) %>%
+  summarize(count = n(),
+            mean_size_hours = mean(Hours, na.rm = TRUE),
+            sd_hours = sd(Hours, na.rm = TRUE),
+            total_hours = sum(Hours, na.rm = TRUE),
+            total_gallons = sum(Gallons, na.rm = TRUE)
+          )
+
+
+ggplot(df_starting_pivot, aes(x = starting_city_state, y = count)) +
+  geom_col() +
+  theme(axis.text = element_text(angle = 45, vjust = .5, hjust = 1))
+  
